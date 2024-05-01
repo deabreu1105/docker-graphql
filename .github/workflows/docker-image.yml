@@ -13,15 +13,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Este paso es para Tomar todo el codigo del repo
+
+    #! Este paso es para Tomar todo el codigo del repo
     - name: Checkout code
       uses: actions/checkout@v4
       # Busqueda exhaustiva de nuestro historial de commits
       with:
         fetch-depth: 0
 
-    # Este nos logeamos con dockerhub con las credenciales antes configuradas
+    #! Este nos logeamos con dockerhub con las credenciales antes configuradas
     - name: Docker login
+      #? Definimos las variables de entorno la cual apunta a los screts configurados en github
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #? Corremos el comando para autenticarnos con dockerhub utilizando las variables de entorno
+      #? Con el pipe podemos ejecutar multiples linea de comandos son lineas independientes
+      run: |
+        echo "Inicando el login"
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+        echo "Finalizando el login"
+
+#    - name: Build the Docker image
+#      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
