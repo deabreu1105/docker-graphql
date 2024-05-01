@@ -13,6 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    # Este paso es para Tomar todo el codigo del repo
+    - name: Checkout code
+      uses: actions/checkout@v4
+      # Busqueda exhaustiva de nuestro historial de commits
+      with:
+        fetch-depth: 0
+
+    # Este nos logeamos con dockerhub con las credenciales antes configuradas
+    - name: Docker login
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+
+#    - name: Build the Docker image
+#      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
