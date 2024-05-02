@@ -21,7 +21,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    #! Este nos logeamos con dockerhub con las credenciales antes configuradas
+    #! Este paso nos logeamos con dockerhub con las credenciales antes configuradas
     - name: Docker login
       #? Definimos las variables de entorno la cual apunta a los screts configurados en github
       env:
@@ -33,6 +33,15 @@ jobs:
         echo "Inicando el login"
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
         echo "Finalizando el login"
+        
+    #! Este paso hacemos la construcción de la imagen
+    - name: Buid Docker Image
+      run: |
+        docker build -t deabreudocker/docker-graphql:0.0.1 .
 
-#    - name: Build the Docker image
-#      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    #! Este paso espara hacer push a dockerhub de la imagen
+    - name: Buid Docker Image
+      run: |
+        docker push deabreudocker/docker-graphql:0.0.1
+
+    
