@@ -40,26 +40,30 @@ jobs:
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        # Aqui phacemos referencia a la versión gestionada anteriormente
-        NEW_VERSION: ${{ steps.version.outputs.version }}
       #? Corremos el comando para autenticarnos con dockerhub utilizando las variables de entorno
       #? Con el pipe | podemos ejecutar multiples linea de comandos son lineas independientes
       run: |
         echo "Inicando el login"
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
         echo "Finalizando el login"
-        echo " NEW VERSION: $NEW_VERSION!!!!!!!!!!!!!! "
         
     #! Este paso hacemos la construcción de la imagen
-    #- name: Buid Docker Image
-    #  run: |
-    #    docker build -t deabreudocker/docker-graphql:0.0.1 .
-    #    docker build -t deabreudocker/docker-graphql:latest .
+    - name: Buid Docker Image
+      env:
+        # Aqui hacemos referencia a la versión gestionada anteriormente
+        NEW_VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        echo " NEW VERSION: $NEW_VERSION!!!!!!!!!!!!!!"
+        docker build -t deabreudocker/docker-graphql:$NEW_VERSION .
+        docker build -t deabreudocker/docker-graphql:latest .
 
     #! Este paso espara hacer push a dockerhub de la imagen
-    #- name: Push Docker Image
-    #  run: |
-    #    docker push deabreudocker/docker-graphql:0.0.1
-    #    docker push deabreudocker/docker-graphql:latest
+    - name: Push Docker Image
+      env:
+        # Aqui hacemos referencia a la versión gestionada anteriormente
+        NEW_VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        docker push deabreudocker/docker-graphql:$NEW_VERSION
+        docker push deabreudocker/docker-graphql:latest
 
     
