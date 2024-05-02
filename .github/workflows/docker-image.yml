@@ -41,7 +41,7 @@ jobs:
         docker build -t deabreudocker/docker-graphql:latest .
 
     #! Este paso espara hacer push a dockerhub de la imagen
-    - name: Buid Docker Image
+    - name: Push Docker Image
       run: |
         docker push deabreudocker/docker-graphql:0.0.1
         docker push deabreudocker/docker-graphql:latest
