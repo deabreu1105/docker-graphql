@@ -20,30 +20,46 @@ jobs:
       # Busqueda exhaustiva de nuestro historial de commits
       with:
         fetch-depth: 0
-
+     
+      #! Este paso es para automatizar el tag
+    - name: Git Semantic Version
+      uses: PaulHatch/semantic-version@v4.0.3
+      with:
+        # Si en los commit escribo la palabra major aumenta el primer numero de v2.0.0
+        major_pattern: "major:"
+        # Si en los commit escribo la palabra feat/feature aumenta el segundo numero de v2.1.0
+        minor_pattern: "feat:"
+        # A string to determine the format of the version output
+        format: "${major}.${minor}.${patch}-prerelease${increment}"
+      # con el id hacemos referencia a todo el paso
+      id: version
+            
     #! Este paso nos logeamos con dockerhub con las credenciales antes configuradas
     - name: Docker login
       #? Definimos las variables de entorno la cual apunta a los screts configurados en github
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        # Aqui phacemos referencia a la versión gestionada anteriormente
+        NEW_VERSION: ${{ steps.version.outputs.version }}
       #? Corremos el comando para autenticarnos con dockerhub utilizando las variables de entorno
-      #? Con el pipe podemos ejecutar multiples linea de comandos son lineas independientes
+      #? Con el pipe | podemos ejecutar multiples linea de comandos son lineas independientes
       run: |
         echo "Inicando el login"
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
         echo "Finalizando el login"
+        echo " NEW VERSION: $NEW_VERSION!!!!!!!!!!!!!! "
         
     #! Este paso hacemos la construcción de la imagen
-    - name: Buid Docker Image
-      run: |
-        docker build -t deabreudocker/docker-graphql:0.0.1 .
-        docker build -t deabreudocker/docker-graphql:latest .
+    #- name: Buid Docker Image
+    #  run: |
+    #    docker build -t deabreudocker/docker-graphql:0.0.1 .
+    #    docker build -t deabreudocker/docker-graphql:latest .
 
     #! Este paso espara hacer push a dockerhub de la imagen
-    - name: Push Docker Image
-      run: |
-        docker push deabreudocker/docker-graphql:0.0.1
-        docker push deabreudocker/docker-graphql:latest
+    #- name: Push Docker Image
+    #  run: |
+    #    docker push deabreudocker/docker-graphql:0.0.1
+    #    docker push deabreudocker/docker-graphql:latest
 
     
